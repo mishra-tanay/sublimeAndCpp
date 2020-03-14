@@ -1,0 +1,35 @@
+<snippet>
+	<content><![CDATA[
+vector < int >  topological_sort(int n)
+{
+    vector < int > ans;
+    queue < int > q;
+    for(int i = 1; i <= n; i++)
+    {
+        if(!in[i])
+        {
+            q.push(i);
+        }
+    }
+    while(!q.empty())
+    {
+        int u = q.front();
+        q.pop();
+        ans.push_back(u);
+        for(auto i : adj[u])
+        {
+            in[i] -= 1;
+            if(in[i] == 0)
+            {
+                q.push(i);
+            }
+        }
+    }
+    return ans;
+}
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+<tabTrigger>sublime_topologicalsort</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

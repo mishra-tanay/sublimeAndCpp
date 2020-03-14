@@ -1,0 +1,41 @@
+<snippet>
+	<content><![CDATA[
+struct node
+{
+    int val;
+    node *child[2];
+};
+node* getnode(){
+    node* temp=new node;
+    temp->child[0]=NULL;
+    temp->child[1]=NULL;
+    return temp;
+}
+void insert(node *trie, ll x, ll ind)
+{   
+    if(ind < 0) {
+        return;
+    }
+    ll k=(x>>ind)&1;
+
+    if(!trie->child[k]) {
+        trie->child[k]=getnode();
+    }
+    insert(trie->child[k], x, ind-1);
+}
+
+void find(node *trie, ll ind)
+{   
+    if(ind<0) {
+        return ;
+    }
+    find(trie->child[1],ind-1);
+}
+// node *trie = getnode();
+// insert(trie,arr[i],31);
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+ <tabTrigger>sublime_bits</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

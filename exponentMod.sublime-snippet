@@ -1,0 +1,21 @@
+<snippet>
+	<content><![CDATA[
+ll exponentMod(ll x, ll y, ll p)
+{
+    ll res = 1;
+    x = x % p;   
+    while (y > 0) 
+    { 
+        if (y & 1) 
+            res = ((res%p)*(x%p)) % p; 
+        y = y>>1;
+        x = ((x%p)*(x%p)) % p;   
+    } 
+    return res%p; 
+}
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>sublime_exponentMod</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

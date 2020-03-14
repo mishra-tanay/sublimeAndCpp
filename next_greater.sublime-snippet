@@ -1,0 +1,26 @@
+<snippet>
+	<content><![CDATA[
+vector < int > next_greater(vector < int > &arr){
+    int n=arr.size();
+    vector < int > result(n,-1);
+    stack < int > s;
+    for(int i=0;i<n;i++){
+        if(s.empty()){
+            s.push(i);
+        }
+        else{
+            while(!s.empty() && arr[s.top()]<arr[i]){
+                result[s.top()]=i;
+                s.pop();
+            }
+            s.push(i);
+        }
+    }
+    return result;
+}
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>sublime_nextgreater</tabTrigger> 
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

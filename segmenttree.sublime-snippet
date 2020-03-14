@@ -1,0 +1,49 @@
+<snippet>
+	<content><![CDATA[
+ll segtree[4 * MAXN];
+void build(int curr, int s, int e) {
+	if (s == e) {
+		segtree[curr] = arr[s];
+		return ;
+	}
+	int mid = (s + e) / 2;
+	build(2 * curr, s, mid);
+	build(2 * curr + 1, mid + 1, e);
+	segtree[curr] = min(segtree[2 * curr], segtree[2 * curr + 1]);
+	return ;
+}
+void update(int curr, int s, int e , int pos , ll val) {
+	if (s == e) {
+		segtree[curr] = val;
+		return ;
+		// segtree[s]=v;
+	}
+	int mid = (s + e) / 2;
+	if (pos <= mid) {
+		update(2 * curr, s, mid, pos, val);
+	}
+	else {
+		update(2 * curr + 1, mid + 1, e, pos, val);
+	}
+	segtree[curr] = min(segtree[2 * curr], segtree[2 * curr + 1]);
+}
+ll query(int curr, int qs, int qe, int s, int e) {
+	if (qe < s || qs > e) 
+        return ;  // base condition 
+	if (qs <= s && e <= qe) {
+		return segtree[curr]; // current segment lies completly inside range segment
+	}
+	else {
+		int mid = (s + e) / 2;
+		left=query(2*curr,qs,qe,s,mid);
+		right=query(2*curr+1,qs,qe,mid+1,e);
+		return ope(left,right); // return result from both left and right ;
+	}
+}
+build(1, 1, n);
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>sublime_segment</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

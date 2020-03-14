@@ -1,0 +1,25 @@
+<snippet>
+	<content><![CDATA[
+bool primes[1000001];
+void seive()
+{
+    memset(primes,true,sizeof(primes));
+    primes[0]=false;
+    primes[1]=false;
+    for(ll i=2; i*i<=1000001; i++)
+    {
+        if(primes[i])
+        {
+            for(ll j=2*i; j<1000001; j+=i)
+            {
+                primes[j]=false;
+            }
+        }
+    }
+}
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>sublime_sieve</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>
