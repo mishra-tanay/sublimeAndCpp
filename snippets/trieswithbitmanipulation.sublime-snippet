@@ -35,7 +35,7 @@ void find(node *trie, ll ind)
 // insert(trie,arr[i],31);
 ]]></content>
 	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
- <tabTrigger>sublime_bits</tabTrigger>
+ <tabTrigger>sublime_trieonbits</tabTrigger>
 	<!-- Optional: Set a scope to limit where the snippet will trigger -->
 	<!-- <scope>source.python</scope> -->
 </snippet>

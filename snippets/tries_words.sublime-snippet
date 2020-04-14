@@ -1,0 +1,59 @@
+<snippet>
+	<content><![CDATA[
+const int csize= 26;
+struct TrieNode{
+    int count;
+    TrieNode *children[csize];
+    bool eow;
+};
+TrieNode* newnode(){
+    TrieNode * temp= new  TrieNode;
+    temp->eow =false;
+    temp->count=0;
+    for(int i=0;i<csize;i++){
+        temp->children[i]=NULL;
+    }
+    return temp;
+}
+void insert(TrieNode* root , string s){
+    TrieNode* temp=root;
+    int c=0;
+    for(int i=0;i<s.length();i++){
+        int index=s[i]-'a';
+        if(!temp->children[index]){
+            TrieNode* temp1=newnode();
+            temp->children[index]=temp1;
+        }
+        temp=temp->children[index];
+    }
+    temp->eow=true;
+    return ;
+}
+bool search(TrieNode* root, string s){
+    TrieNode* temp=root;
+    for(int i=0;i<s.length();i++){
+        int index=s[i]-'a';
+        if(temp->children[index]){
+            temp=temp->children[index];
+        }
+        else {
+            return false;
+        }
+    }
+    if(temp && temp->eow){
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+
+}
+// Create Node ; TrieNode * root=newnode();
+// Insert word : insert(root,str);
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+ <tabTrigger>sublime_triesonwords</tabTrigger> 
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>
