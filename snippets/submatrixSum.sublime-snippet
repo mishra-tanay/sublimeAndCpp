@@ -1,0 +1,19 @@
+<snippet>
+	<content><![CDATA[
+void preProcess() {
+	for (int r = 0; r < n; r++) {
+		for (int c = 0; c < m; c++) {
+			sum[r + 1][c + 1] = sum[r + 1][c] + sum[r][c + 1] + arr[r][c] - sum[r][c];
+		}
+	}
+}
+
+ll sumQuery(int row1, int col1, int row2, int col2) {// topleft row1,col1 -> bottomright row2,col2
+	return sum[row2 + 1][col2 + 1] - sum[row1][col2 + 1] - sum[row2 + 1][col1] + sum[row1][col1];
+}
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+<tabTrigger>sublime_submatrixsum</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

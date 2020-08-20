@@ -1,0 +1,25 @@
+<snippet>
+	<content><![CDATA[
+
+inline ll setbit(ll mask , ll i){
+    return mask|(1<<i);
+}
+inline ll isset(ll mask , ll i){
+    return mask&(1<<i);
+}
+inline ll isunset(ll mask , ll i){
+    return !(mask&(1<<i));
+}
+inline ll unset(ll mask , ll i){
+    ll temp=mask&!(1<<i);
+    return temp;
+}
+inline  ll countset(ll mask){
+    return __builtin_popcount(mask);
+}
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>sublime_bitmasks</tabTrigger> 
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

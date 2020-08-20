@@ -1,0 +1,9 @@
+{
+	"color_scheme": "Packages/Material Color Scheme/sublime/material-light.tmTheme",
+	"font_size": 15,
+	"ignored_packages":
+	[
+		"Vintage"
+	],
+	"theme": "Agila.sublime-theme"
+}

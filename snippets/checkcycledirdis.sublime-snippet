@@ -1,0 +1,37 @@
+<snippet>
+	<content><![CDATA[
+bool vis[300001];
+bool recstack[3000001];
+int checkcycle(int i){
+    if(vis[i] == false) 
+    { 
+        vis[i] = true; 
+        recstack[i] = true; 
+        for(auto it:adj[i]) 
+        { 
+            if ( !vis[it] && checkcycle(it)) 
+                return 1; 
+            else if (recstack[it]) 
+                return 1; 
+        } 
+  
+    } 
+    recstack[i] = false; 
+    return false;
+}
+bool check(int n){
+	for(int i=1;i<=n;i++){
+        if(!vis[i]){
+            if(checkcycle(i)){
+                return true;
+            }
+        }
+    }
+   return false;
+}
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	 <tabTrigger>sublime_checkcycledirecteddisconnected</tabTrigger> -->
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

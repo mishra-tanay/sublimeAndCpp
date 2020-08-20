@@ -1,0 +1,67 @@
+<snippet>
+	<content><![CDATA[
+ll segtree[4 * MAXN];
+ll lazyarray[4 * MAXN];
+ll arr[MAXN];
+void build(int curr, int s, int e) {
+    if (s == e) {
+        segtree[curr] = arr[s];
+        return ;
+    }
+    int mid = (s + e) / 2;
+    build(2 * curr, s, mid);
+    build(2 * curr + 1, mid + 1, e);
+    segtree[curr] = max( segtree[2 * curr] , segtree[2 * curr + 1]);
+}
+void update_range(int curr, int s, int e, int l , int r, ll val) {
+    if (lazyarray[curr] != 0)
+    {
+        segtree[curr] += lazyarray[curr];
+        if (s != e) { // Not a leaf node , Propagagate further
+            lazyarray[2 * curr] += lazyarray[curr];
+            lazyarray[2 * curr + 1] += lazyarray[curr];
+        }
+        lazyarray[curr] = 0;
+    }
+    if (s > e || s > r || e < l) {
+        return ;
+    }
+    if ( s >= l && e <= r) { //Completly lies in range
+        segtree[curr] += val;
+        if ( s != e) {
+            lazyarray[2 * curr] += val;
+            lazyarray[2 * curr + 1] += val;
+        }
+        return;
+    }
+    int mid = (s + e) / 2;
+    update_range(2 * curr, s, mid, l, r, val);
+    update_range(2 * curr + 1, mid + 1, e, l , r, val);
+    segtree[curr] = max(segtree[2 * curr], segtree[2 * curr + 1]);
+    return ;
+}
+ll query_range(int curr, int s, int e, int l , int r) {
+    if (lazyarray[curr] != 0)
+    {
+        segtree[curr] += lazyarray[curr];
+        if (s != e) { // Not a leaf node , Propagagate further
+            lazyarray[2 * curr] += lazyarray[curr];
+            lazyarray[2 * curr + 1] += lazyarray[curr];
+        }
+        lazyarray[curr] = 0;
+    }
+    if (s > e || s > r || e < l) {
+        return 0;
+    }
+    if ( s >= l && e <= r) { //Completly lies in range
+        return segtree[curr];
+    }
+    int mid = (s + e) / 2;
+    return max(query_range(2 * curr, s, mid, l, r), query_range(2 * curr + 1, mid + 1, e, l , r));
+}
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>sublime_lazysegment</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

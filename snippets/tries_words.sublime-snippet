@@ -53,7 +53,7 @@ bool search(TrieNode* root, string s){
 // Insert word : insert(root,str);
 ]]></content>
 	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
- <tabTrigger>sublime_triesonwords</tabTrigger> 
+<tabTrigger>sublime_tries</tabTrigger>
 	<!-- Optional: Set a scope to limit where the snippet will trigger -->
 	<!-- <scope>source.python</scope> -->
 </snippet>

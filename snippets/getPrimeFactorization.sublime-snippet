@@ -1,0 +1,22 @@
+<snippet>
+	<content><![CDATA[
+vector < pair <int, int> > getPF(int n) {
+    vector < pair<int, int> > ans;
+    while (n > 1) {
+        int count1 = 0;
+
+        int temp = spf[n];
+        while (n > 1 && n % temp == 0) {
+            count1++;
+            n /= temp;
+        }
+        ans.push_back({temp, count1});
+    }
+    return ans;
+}
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+ <tabTrigger>sublime_getPF</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

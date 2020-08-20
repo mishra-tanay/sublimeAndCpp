@@ -1,0 +1,73 @@
+<snippet>
+	<content><![CDATA[
+struct node {
+    ll val
+    node *left;
+    node *right;
+    node() {
+        ll val = 0;
+        left = NULL;
+        right = NULL;
+    }
+};
+node *segtree[MAXN], empty;
+void build(node* curr, int s, int e) {
+    if (s == e) {
+        return ;
+    }
+    int mid = (s + e) / 2;
+    curr->left = new node();
+    curr->right = new node();
+    build(curr->left, s, mid);
+    build(curr->right, mid + 1, e);
+}
+node merge(node l, node r) {
+    node result;
+    return result;
+}
+void update(node* prev, node* curr, int s, int e , int ind , ll val) {
+    if (s > e || e < ind || s > ind) {
+        return ;
+    }
+    if (s == e) { // Intitialise index value
+        curr->val = val;
+        return ;
+    }
+    int mid = (s + e) / 2;
+    if (ind <= mid) {
+        curr->right = prev->right;
+        curr->left = new node();
+        update(prev->left, curr->left, s, mid, ind, val);
+    }
+    else {
+        curr->left = prev->left;
+        curr->right = new node();
+        update(prev->right , curr->right, mid + 1, e, ind, val);
+    }
+    node result = merge(*curr->left, *curr->right);
+    curr->val = result.val;
+}
+
+node query(node *curr, int s, int e , int l , int r) {
+
+    if (s > e || r < s || e < l)
+        return empty;
+    if (l <= s && e <= r)
+        return *curr;
+    int mid = (s + e) / 2;
+    return merge(query(curr->left, s, mid, l, r), query(curr->right, mid + 1, e, l, r));
+}
+int version = 0;
+segvers[0] = new node();
+/*
+build(segtree[0], 0, n - 1);
+segvers[version] = new node();
+update(segtree[version - 1], segtree[version], 0, n - 1, ind, val);
+query(segtree[version], 0, n - 1, l, r);
+*/
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	 <tabTrigger>sublime_persistentsegment</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

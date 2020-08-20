@@ -1,0 +1,53 @@
+<snippet>
+	<content><![CDATA[
+int timer;
+vector<int> tin, tout;
+vector<vector<int>> up;
+
+void dfs(int v, int p)
+{
+	tin[v] = ++timer;
+	up[v][0] = p;
+	for (int i = 1; i <= LOGN - 1; ++i)
+		up[v][i] = up[up[v][i - 1]][i - 1];
+
+	for (int u : adj[v]) {
+		if (u != p)
+			dfs(u, v);
+	}
+
+	tout[v] = ++timer;
+}
+
+bool isAncestor(int u, int v)
+{
+	return tin[u] <= tin[v] && tout[u] >= tout[v];
+}
+
+int getLca(int u, int v)
+{
+	if (isAncestor(u, v))
+		return u;
+	if (isAncestor(v, u))
+		return v;
+	for (int i = LOGN - 1; i >= 0; --i) {
+		if (!isAncestor(up[u][i], v))
+			u = up[u][i];
+	}
+	return up[u][0];
+}
+
+void preProcess(int root) {
+	tin.resize(n + 1);
+	tout.resize(n + 1);
+	timer = 0;
+
+	up.assign(n + 1, vector<int>(LOGN));
+	dfs(root, root);
+}
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+ <tabTrigger>sublime_lcabinarylift</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

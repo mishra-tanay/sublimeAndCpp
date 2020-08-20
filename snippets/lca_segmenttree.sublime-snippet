@@ -1,0 +1,92 @@
+<snippet>
+	<content><![CDATA[
+vector<int> height, euler, first, segtree;
+vector<bool> visited;
+int n;
+void dfs(vector< vector<int> > &adj, int node, int h = 0)
+{
+	visited[node] = true;
+	height[node] = h;
+	first[node] = euler.size();
+	euler.push_back(node);
+	for (int i = 0; i < adj[node].size(); i++)
+	{
+		int to = adj[node][i];
+		if (!visited[to])
+		{
+			dfs(adj, to, h + 1);
+			euler.push_back(node);
+		}
+	}
+}
+
+void build(int node, int b, int e)
+{
+	if (b == e)
+	{
+		segtree[node] = euler[b];
+	}
+	else
+	{
+		int mid = (b + e) / 2;
+		build(node << 1, b, mid);
+		build(node << 1 | 1, mid + 1, e);
+		int l = segtree[node << 1], r = segtree[node << 1 | 1];
+		segtree[node] = (height[l] < height[r]) ? l : r;
+	}
+}
+
+int query(int node, int b, int e, int L, int R)
+{
+	if (b > R || e < L)
+		return -1;
+	if (b >= L && e <= R)
+		return segtree[node];
+	int mid = (b + e) >> 1;
+
+	int left = query(node << 1, b, mid, L, R);
+	int right = query(node << 1 | 1, mid + 1, e, L, R);
+	if (left == -1) return right;
+	if (right == -1) return left;
+	return height[left] < height[right] ? left : right;
+}
+
+int lca(int u, int v)
+{
+	int left = first[u], right = first[v];
+	if (left > right)
+		swap(left, right);
+	return query(1, 0, euler.size() - 1, left, right);
+}
+int dist(int u, int v)
+{
+	int dist = height[u] + height[v] - 2 * height[lca(u, v)];
+	return dist;
+}
+
+void construct(vector < vector < int > > &adj){
+	vector < vector < int > > adj(n + 1);
+	for (int i = 0; i < n - 1; i++)
+	{
+		int x, y;
+		cin >> x >> y;
+		adj[x].push_back(y);
+		adj[y].push_back(x);
+
+	}
+	int root = 1;
+	height.resize(n + 1);
+	first.resize(n + 1);
+	euler.reserve((n + 1) * 2);
+	visited.assign(n + 1, false);
+	dfs(adj, root);
+	int m = euler.size();
+	segtree.resize(m * 4);
+	build(1, 0, m - 1);
+}
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+ <tabTrigger>sublime_lcaseg</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

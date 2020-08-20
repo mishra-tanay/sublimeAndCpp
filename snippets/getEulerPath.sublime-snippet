@@ -1,0 +1,23 @@
+<snippet>
+	<content><![CDATA[
+vector < int > euler;
+int pos=1;
+void get_euler(int i, int p) {
+    start[i] = pos++;
+    euler.push_back(i);
+    for (auto it : adj[i])
+    {
+        if (it != p) {
+            get_euler(it, i);
+            pos++;
+        }
+    }
+    euler.push_back(i);
+    last[i] = pos;
+}
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+<tabTrigger>sublime_geteuler</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

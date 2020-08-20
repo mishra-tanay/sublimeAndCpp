@@ -1,0 +1,29 @@
+<snippet>
+	<content><![CDATA[
+ll hashv[MAXN];
+ll power[MAXN];
+void generateHash(string &s) {
+    ll cval = 0;
+    ll p = 31;
+    int n = s.length();
+    ll cpower = 1;
+    power[0] = 1;
+    hashv[n] = 0;
+    for (int i = n - 1; i >= 0; i--) {
+        cval = (cval * p + (s[i] - 'a' + 1)) % mod;
+        hashv[i] = cval;
+        power[n - i] = (power[n - i - 1] * p) % mod;
+    }
+    power[n] = power[n - 1] * p;
+    power[n] %= mod;
+}
+ll getHash(int l , int r) {
+    ll val = (mod - (hashv[r + 1] * power[r - l + 1]) % mod + hashv[l] ) % mod;
+    return val;
+}
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+ <tabTrigger>sublime_rabinKarpBackward</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>
