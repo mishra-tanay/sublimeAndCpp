@@ -9,7 +9,9 @@ Macros that you might need to include in your cpp file
 	a. #define ll long long int
 	b. #define mod 1e9+7 
 	
-
+Tip:
+    You can use AStyleFormatter to format c++ files which provides you an option to autoformat on save.
+    
 TabTriggers
 
 BIT 						: sublime_bit  
