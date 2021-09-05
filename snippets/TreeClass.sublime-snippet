@@ -1,0 +1,145 @@
+<snippet>
+	<content><![CDATA[
+class Tree {
+public:
+    Tree(int n, vector < vector < int> > & adj, int root) {
+        d_count = n;
+        d_root = root;
+        d_adj = adj;
+        d_log_n = ceil(log2(n));
+        resizeVectors();
+        initialDFS(root);
+    }
+    Tree(int n, int root, bool is_undirected = true) {
+        d_count = n;
+        d_root = root;
+        d_log_n = ceil(log2(n));
+        d_adj.resize(d_count + 1);
+        for (int i = 0; i < d_count - 1; i++) {
+            int u, v;
+            cin >> u >> v;
+            d_adj[u].push_back(v);
+            if (is_undirected) {
+                d_adj[v].push_back(u);
+            }
+        }
+        resizeVectors();
+        initialDFS(root);
+    }
+    void debugTree() {
+        cout << "  \n----- Tree ------" << '\n';
+        cout << d_adj.size() << '\n';
+        cout << d_in.size() << '\n';
+        for (int i = 0; i <= d_count; i++) {
+            cout << "Node " << i << " [ ";
+
+            for (auto it : d_adj[i]) {
+                cout << it << ' ';
+            }
+            cout << "]" << '\n';
+        }
+    }
+    void resizeVectors() {
+        d_in.resize(d_count + 1);
+        d_out.resize(d_count + 1);
+        d_level.resize(d_count + 1);
+        d_subtree_count.resize(d_count + 1);
+        d_parents.resize(d_count + 1, vector < int> (d_log_n + 1, -1));
+    }
+    /// Returns subtree count for a node.
+    /// Calculate in out time, euler tour, level of node, subtree count, parents vector.
+    int initialDFS(int curr, int par = 1, int level = 0) {
+        d_in[curr] = ++timer;
+        d_euler.push_back(curr);
+        d_level[curr] = level;
+        d_parents[curr][0] = par;
+        for (int power = 1; power <= d_log_n; power++) {
+            int parentpower = d_parents[curr][power - 1];
+            d_parents[curr][power] = d_parents[parentpower][power - 1];
+
+        }
+        int curr_subtree_count = 0;
+        for (auto v : d_adj[curr]) {
+            if (v == par) {
+                continue;
+            }
+            curr_subtree_count += initialDFS(v, curr, level + 1);
+        }
+        d_subtree_count[curr] = curr_subtree_count + 1;
+        d_out[curr] = ++timer;
+        d_euler.push_back(curr);
+        return d_subtree_count[curr];
+    }
+
+    int getLCA(int u, int v) {
+        if (d_level[u] < d_level[v])
+            swap(u, v);
+        for (int i = d_log_n; i >= 0; i--) {
+            if ((d_level[u] - pow(2, i)) >= d_level[v]) {
+                u = d_parents[u][i];
+            }
+        }
+        /// Now u and v are at same level.
+        if ( u == v) {
+            return u;
+        }
+        for (int i = d_log_n; i >= 0; i--) {
+            if (d_parents[u][i] != d_parents[v][i]) {
+                u = d_parents[u][i];
+                v = d_parents[v][i];
+            }
+        }
+        /* Reached to condition       lca
+                                    u     v
+        */
+        return d_parents[v][0];
+    }
+
+    int getDistance(int u, int v) {
+        int level_u = d_level[u];
+        int level_v = d_level[v];
+        int lca = getLCA(u, v);
+        int level_lca = d_level[lca];
+        return level_v + level_u - 2 * level_lca;
+    }
+    vector <int> getEulerTour() {
+        assert(!d_euler.empty());
+        return d_euler;
+    }
+    int getInTime(int u) {
+        assert(!d_in.size() > u);
+        return d_in[u];
+    }
+    int getOutTime(int u) {
+        assert(d_in.size() > u);
+        return d_out[u];
+    }
+    int getParents(int u, int p) {
+        assert(u < d_parents.size());
+        assert(p < d_parents[u].size());
+        return d_parents[u][p];
+    }
+    int getDepth(int u) {
+        assert(d_level.size() > u);
+        return d_level[u];
+    }
+
+public:
+    int d_count = 0;
+    vector < vector <int> > d_adj;
+    int d_root = 0;
+    int d_log_n = 0;
+    int timer = -1;
+    vector <int> d_euler;
+    vector <int> d_in;
+    vector <int> d_out;
+    vector <int> d_level;
+    vector <int> d_subtree_count;
+    vector <vector <int> > d_parents;
+};
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+ <tabTrigger>sublime_treeclass</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

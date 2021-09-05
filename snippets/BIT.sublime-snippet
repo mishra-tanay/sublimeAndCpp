@@ -1,25 +1,39 @@
 <snippet>
 	<content><![CDATA[
-const int MAXN=1e5;
-ll bit[MAXN+1];
-void update (int pos, int val)
-{
-    while(pos <= MAXN)
-    {
-        bit[pos] += val;
-        pos += (pos & -pos);
-    }
-}
-int query(int pos)
-{
-    ll ans = 0;
-    while(pos > 0)
-    {
-        ans += bit[pos];
-        pos -= (pos & -pos);
-    }
-    return ans;
-}
+class BIT {
+public:
+	/// Constructor.
+	BIT(int n) {
+		bit_array.resize(n + 1, 0);
+		size = n + 1;
+	}
+	/// Increase value at pos by 'val'
+	void update(int pos, int val) {
+		assert(pos > 0);
+		while (pos < size) {
+			bit_array[pos] += val;
+			pos += getLowestBit(pos);
+		}
+	}
+
+	long long int query(int pos) {
+		long long int ans = 0;
+		while (pos > 0) {
+			ans += bit_array[pos];
+			pos -= getLowestBit(pos);
+		}
+		assert(pos == 0);
+		return ans;
+	}
+
+	long long int getLowestBit(int n) {
+		return n & -n;
+	}
+
+private:
+	int size;
+	vector<long long int> bit_array;
+};
 ]]></content>
 	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
 	<tabTrigger>sublime_bit</tabTrigger>

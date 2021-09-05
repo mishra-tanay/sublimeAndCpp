@@ -1,0 +1,66 @@
+<snippet>
+	<content><![CDATA[
+class KMP {
+public:
+	KMP(const string& pattern) : d_pattern(pattern) {
+		len = d_pattern.length();
+		buildLPS();
+	}
+	vector<int> countMatches(const string& text) {
+		vector<int> result;
+		int i = 0; // index for text
+		int j = 0; // index for pattern
+		int n = text.length();
+		while (i < n) {
+			if (text[i] == d_pattern[j]) {
+				j++;
+				i++;
+			}
+			if (j == len) {
+				result.push_back(i - len);
+				j = lps[j - 1];
+			}
+
+			// mismatch after j matches
+			else if (i < n && d_pattern[j] != text[i]) {
+				// Do not match lps[0..lps[j-1]] characters,
+				// they will match anyway
+				if (j != 0) {
+					j = lps[j - 1];
+				}
+				else {
+					i = i + 1;
+				}
+			}
+		}
+		return result;
+	}
+private:
+	void buildLPS() {
+		lps.resize(len, 0);
+		int i = 0;
+		int j = 1;
+		while (j < len) {
+			if (d_pattern[j] == d_pattern[i]) {
+				lps[j] = i + 1;
+				j++;
+				i++;
+			} else {
+				if (i == 0) {
+					j++;
+				} else {
+					i = lps[i - 1];
+				}
+			}
+		}
+	}
+	string d_pattern;
+	int len;
+	vector<int> lps;
+};
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	 <tabTrigger>sublime_kmp</tabTrigger> 
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

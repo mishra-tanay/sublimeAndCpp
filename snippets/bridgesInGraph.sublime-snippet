@@ -1,0 +1,44 @@
+<snippet>
+	<content><![CDATA[
+void bridge_dfs(int curr, int parent, vector<vector<int>> &adj, vector<bool> &vis, vector<int>& discovery_time,
+                vector<int>& lowest_discovery_time, int& _time, vector<pair<int, int>>& bridges) {
+    vis[curr] = true;
+    discovery_time[curr] = lowest_discovery_time[curr] = ++_time;
+    for (auto it : adj[curr]) {
+        if (it == parent) {
+            continue;
+        }
+        if (!vis[it]) {
+            bridge_dfs(it, curr, adj, vis, discovery_time, lowest_discovery_time, _time, bridges);
+            lowest_discovery_time[curr] = min(lowest_discovery_time[curr], lowest_discovery_time[it]);
+            if (lowest_discovery_time[it] > discovery_time[curr]) {
+                bridges.push_back({curr, it});
+            }
+        } else {
+            lowest_discovery_time[curr] = min(lowest_discovery_time[curr], discovery_time[it]);
+        }
+    }
+}
+vector<pair<int, int>>  calculateBridges(vector<vector<int>> &adj) {
+    vector<bool> vis;
+    vector<int> discovery_time;
+    vector<int> lowest_discovery_time;
+    int n = adj.size();
+    vis.resize(n, false);
+    discovery_time.resize(n, 0);
+    lowest_discovery_time.resize(n, 0);
+    vector<pair<int, int>> bridges;
+    int _time = 0;
+    for (int i = 0; i < n; i++) {
+        if (!vis[i]) {
+            bridge_dfs(i, -1, adj, vis, discovery_time, lowest_discovery_time, _time, bridges);
+        }
+    }
+    return bridges;
+}
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+<tabTrigger>sublime_bridges</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

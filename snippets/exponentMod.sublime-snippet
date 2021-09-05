@@ -1,17 +1,18 @@
 <snippet>
 	<content><![CDATA[
-ll exponentMod(ll x, ll y, ll p)
+long long int exponentMod(long long int num, long long int power, long long int mod)
 {
-    ll res = 1;
-    x = x % p;   
-    while (y > 0) 
-    { 
-        if (y & 1) 
-            res = ((res%p)*(x%p)) % p; 
-        y = y>>1;
-        x = ((x%p)*(x%p)) % p;   
-    } 
-    return res%p; 
+	long long int result = 1;
+	num = num % mod;
+	while (power > 0)
+	{
+		if (power & 1) {
+			result = ((result % mod) * (num % mod)) % mod;
+		}
+		power = power >> 1;
+		num = ((num % mod) * (num % mod)) % mod;
+	}
+	return result % mod;
 }
 ]]></content>
 	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->

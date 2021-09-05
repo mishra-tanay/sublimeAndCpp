@@ -1,0 +1,84 @@
+<snippet>
+	<content><![CDATA[
+class EulerPath {
+public:
+	EulerPath(int vertex ) {
+		n = vertex;
+		in_degree.resize(n + 1, 0);
+		out_degree.resize(n + 1, 0);
+		for (int i = 1; i <= n; i++) {
+			for (auto it : adj[i]) {
+				in_degree[it]++;
+				out_degree[i]++;
+				edges_count++;
+			}
+		}
+	}
+	bool isValidStart(int start) {
+		if ( out_degree[start] - in_degree[start] > 1 || (out_degree[start] - in_degree[start] < 0)) {
+			return false;
+		}
+		return out_degree[start] > 0;
+	}
+
+	int getStart() {
+		int start = -1;
+		for (int i = 1; i <= n; i++) {
+			if (out_degree[i] - in_degree[i] == 1) {
+				return i;
+			} else if (out_degree[i] > 0) {
+				start = i;
+			}
+		}
+		return start;
+	}
+	bool isEulerPathPossible() {
+		if (edges_count == 0) return false;
+		int startNodes = 0, endNodes = 0;
+		for (int i = 1; i <= n; i++) {
+			if (out_degree[i] - in_degree[i] > 1 || in_degree[i] - out_degree[i] > 1) return false;
+			else if (out_degree[i] - in_degree[i] == 1) startNodes++;
+			else if (in_degree[i] - out_degree[i] == 1) endNodes++;
+		}
+		return (endNodes == 0 && startNodes == 0) || (endNodes == 1 && startNodes == 1);
+	}
+	void eulerPathDFS(int curr, vector<int> &path) {
+		if (!path.empty() && path[0] != n) {
+			return;
+		}
+		while (adj[curr].size() > 0) {
+			auto it = adj[curr].back();
+			adj[curr].pop_back();
+			eulerPathDFS(it, path);
+		}
+		path.push_back(curr);
+	}
+	vector<int> getEulerPath(int start = -1) {
+		vector<int> ans;
+		if (!isEulerPathPossible()) {
+			return ans;
+		}
+		if (start != -1 && !isValidStart(start)) {
+			return ans;
+		} else if (start == -1) {
+			start = getStart();
+		}
+		eulerPathDFS(start, ans);
+		reverse(ans.begin(), ans.end());
+		if (ans.size() != edges_count + 1) {
+			ans.clear();
+		}
+		return ans;
+	}
+private:
+	int n;
+	vector<int> in_degree;
+	vector<int> out_degree;
+	int edges_count = 0;
+};
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>sublime_eulerGraph</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

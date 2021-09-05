@@ -1,0 +1,30 @@
+<snippet>
+	<content><![CDATA[
+int parent[MAXN][LOGN];
+void computeParents(int curr, int par) {
+    parent[curr][0] = par;
+    for (int j = 1; j < LOGN; j++) {
+        parent[curr][j] = parent[parent[curr][j - 1]][j - 1];
+    }
+    for (auto it : adj[curr]) {
+        if (it != par) {
+            computeParents(it, curr);
+        }
+    }
+}
+int getKthParent(int curr, int k) {
+    int par = curr;
+    for (int j = LOGN - 1; j >= 0; j--) {
+        if (pow(2, j) <= k && parent[par][j] != 0) {
+            k -= pow(2, j);
+            par = parent[par][j];
+        }
+    }
+    return (k == 0 ? par : -1);
+}
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+<tabTrigger>sublime_binarylifting</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

@@ -1,59 +1,57 @@
 <snippet>
 	<content><![CDATA[
-const int csize= 26;
-struct TrieNode{
-    int count;
-    TrieNode *children[csize];
-    bool eow;
+struct Node {
+	Node* child[MAX_SIZE];
+	bool is_eow;
+	int count;
+	Node() {
+		for (int i = 0; i < MAX_SIZE; i++) {
+			child[i] = nullptr;
+		}
+		is_eow = false;
+		count = 0;
+	}
 };
-TrieNode* newnode(){
-    TrieNode * temp= new  TrieNode;
-    temp->eow =false;
-    temp->count=0;
-    for(int i=0;i<csize;i++){
-        temp->children[i]=NULL;
-    }
-    return temp;
+int getIndex(char c) {
+	return c - 'a';
 }
-void insert(TrieNode* root , string s){
-    TrieNode* temp=root;
-    int c=0;
-    for(int i=0;i<s.length();i++){
-        int index=s[i]-'a';
-        if(!temp->children[index]){
-            TrieNode* temp1=newnode();
-            temp->children[index]=temp1;
-        }
-        temp=temp->children[index];
-    }
-    temp->eow=true;
-    return ;
-}
-bool search(TrieNode* root, string s){
-    TrieNode* temp=root;
-    for(int i=0;i<s.length();i++){
-        int index=s[i]-'a';
-        if(temp->children[index]){
-            temp=temp->children[index];
-        }
-        else {
-            return false;
-        }
-    }
-    if(temp && temp->eow){
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+class Trie {
+public:
+	Trie(Node* root) {
+		d_root = root;
+	}
+	void insert(const string& s) {
+		auto curr = d_root;
+		for (auto c : s) {
+			int index = getIndex(c);
+			if (curr->child[index] == nullptr) {
+				curr->child[index] = new Node();
+			}
+			curr->child[index]->count++;
+			curr = curr->child[index];
+		}
+		curr->is_eow = true;
+	}
+	bool isPresent(const string& s) {
+		auto curr = d_root;
+		for (auto c : s) {
+			int index = getIndex(c);
+			if (curr->child[index] == nullptr) {
+				return false;
+			}
+			curr = curr->child[index];
+		}
+		return curr->is_eow;
+	}
+	Node* getRoot() {
+		return d_root;
+	}
 
-}
-// Create Node ; TrieNode * root=newnode();
-// Insert word : insert(root,str);
+private:
+	Node* d_root;
+};
 ]]></content>
 	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
-<tabTrigger>sublime_tries</tabTrigger>
-	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	 <tabTrigger>sublime_triesclass</tabTrigger>	<!-- Optional: Set a scope to limit where the snippet will trigger -->
 	<!-- <scope>source.python</scope> -->
 </snippet>

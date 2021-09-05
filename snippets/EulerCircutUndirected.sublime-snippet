@@ -1,0 +1,78 @@
+<snippet>
+	<content><![CDATA[
+
+// For undirected edge x -> y and y ->x should have same edge number.
+vector<pair<int, int>> adj[MAXN];
+int n;
+bool vis_edge[2 * MAXN];
+void checkConnectivity(int s, vector<bool>&vis) {
+	vis[s] = true;
+	for (auto it : adj[s]) {
+		if (!vis[it.first])
+			checkConnectivity(it.first, vis);
+	}
+}
+bool canHaveEulerCircuit() {
+	int odd_count = 0;
+	for (int i = 1; i <= n; i++) {
+		if (adj[i].size() % 2 != 0) {
+			odd_count++;
+		}
+	}
+	if (odd_count > 0) {
+		return false;
+	}
+	vector<bool> vis(n + 1, false);
+	checkConnectivity(1, vis);
+	for (int i = 1; i <= n; i++) {
+		if (!vis[i] && !adj[i].empty()) {
+			return false;
+		}
+	}
+	return true;
+}
+int getStart() {
+	for (int i = 1; i <= n; i++) {
+		if (!adj[i].empty()) {
+			return i;
+		}
+	}
+	return -1;
+}
+void calculcateEulerCircuit(int src, vector<int> &path) {
+	while (!adj[src].empty()) {
+		auto dest = adj[src].back();
+		adj[src].pop_back();
+		if (vis_edge[dest.second]) {
+			continue;
+		} else {
+			vis_edge[dest.second] = true;
+			calculcateEulerCircuit(dest.first, path);
+		}
+	}
+	path.push_back(src);
+}
+vector<int> getEulerCircuit(int start = -1) {
+	vector<int> ans;
+	if (!canHaveEulerCircuit()) {
+		return ans;
+	}
+	if (start == -1) {
+		start = getStart();
+	}
+	if (start == -1) {
+		return ans;
+	}
+	calculcateEulerCircuit(start, ans);
+	if (!ans.empty() && ans.back() != start) {
+		ans.clear();
+	}
+	reverse(ans.begin(), ans.end());
+	return ans;
+}
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	 <tabTrigger>sublime_eulercircuit_undirected</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>
