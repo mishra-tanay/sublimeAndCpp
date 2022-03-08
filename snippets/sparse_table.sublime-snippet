@@ -1,40 +1,57 @@
 <snippet>
 	<content><![CDATA[
-int sparse[MAXN][LOGN];
-int arr[MAXN];
-ll logarray[MAXN];
-int n;
-ll func(ll a, ll b){
-    return min(a,b);
-}
-void build_sparse(){
-    int max_bit;
-    logarray[1]=0;
-
-    for(int i=2;i<=n;i++){
-        logarray[i]=logarray[i/2]+1;
+class SparseTable {
+  public:
+    SparseTable(const vector<ll>& arr) {
+        d_arr = arr;
+        d_n = d_arr.size();
+        d_base_value = LONG_MAX;
+        K = 22;
+        d_log.resize(d_n + 1);
+        d_log[1] = 0;
+        for (int i = 2; i <= d_n ; i++) {
+            d_log[i] = d_log[i / 2] + 1;
+        }
+        d_st.resize(d_n, vector<ll>(K + 1, d_base_value ));
+        buildST();
     }
-    max_bit=logarray[n]+1;
-    for(int i=0;i<n;i++){
-        sparse[i][0]=arr[i];
+    ll getValue(int l, int r) {
+        int k = K;
+        ll result = d_base_value;  /// According to function
+        while (k >= 0) {
+            if ((1 << k) <= (r - l + 1)) {
+                result = mainMethod(result, d_st[l][k]);
+                l += (1 << k);
+            }
+            k--;
+        }
+        return result;
     }
-    for(int j=1;j<=max_bit;j++){
-        for(int i=0;i + (1<<j) <=n; i++) {
-            sparse[i][j]=func(sparse[i][j-1],sparse[i+(1<<(j-1))][j-1]);
+    ll getAssociativeQuery(int l, int r) {
+        int power = d_log[r - l + 1];
+        return mainMethod(d_st[l][power], d_st[r - (1 << power) + 1][power]);
+    }
+  private:
+    ll mainMethod(ll a, ll b) {
+        return min(a, b);
+    }
+    void buildST() {
+        for (int i = 0; i < d_n; i++) {
+            d_st[i][0] = d_arr[i];
+        }
+        for (int power = 1; power <= K; power++) {
+            for (int i = 0; (i + (1 << power) - 1) < d_n; i++) {
+                d_st[i][power] = mainMethod(d_st[i][power - 1], d_st[i + (1 << (power - 1))][power - 1]);
+            }
         }
     }
-}
-ll query_sparse(int l , int r)
-{
-    int ne=r-l+1;
-    int j=logarray[ne];
-   
-    ll ans=func(sparse[l][j],sparse[r-(1<<j)+1][j]);
-    return ans;
-}
-
-build_sparse();
-query_sparse(i,j);
+    vector<ll> d_arr;
+    int d_n = 0;
+    vector<ll> d_log;
+    vector<vector<ll>> d_st;
+    int K = 0;
+    long long int d_base_value;
+};
 ]]></content>
 	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
 <tabTrigger>sublime_sparse</tabTrigger>
