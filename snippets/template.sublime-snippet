@@ -70,11 +70,11 @@ const bool print_case_no = 0;
 /****************************************************************************/
 
 void getac(int T) {
-
+    $1
 }
 int  main()
 {
-#ifndef ONLINE_JUDGE
+#ifdef TANAY
     freopen("input.txt", "r", stdin);
     freopen("output.txt", "w", stdout);
     freopen("error.txt", "w", stderr);
@@ -95,10 +95,6 @@ int  main()
     cerr << "Time elapsed " << chrono::duration_cast<chrono::milliseconds>(chrono::high_resolution_clock::now() - start_time).count();
     return 0;
 }
-
-
-
-
 ]]></content>
 	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
 	 <tabTrigger>cpptemplate</tabTrigger>

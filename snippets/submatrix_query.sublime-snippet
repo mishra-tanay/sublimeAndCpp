@@ -1,0 +1,42 @@
+<snippet>
+	<content><![CDATA[
+class SubMatrixQuery {
+  public:
+	SubMatrixQuery(vector<vector<ll>>& matrix) {
+		d_matrix = matrix;
+		n = d_matrix.size();
+		m = d_matrix[0].size();
+		d_prefix.resize(n, vector<ll>(m, 0));
+		preCompute();
+	}
+	ll query(int row1, int col1, int row2, int col2) {
+		ll bottom_right = d_prefix[row2][col2];
+		ll above_top_right = d_prefix[row1 - 1][col2];
+		ll left_bottom_left = d_prefix[row2][col1 - 1];
+		ll above_and_left_top_left = d_prefix[row1 - 1][col1 - 1];
+		return bottom_right - above_top_right - left_bottom_left + above_and_left_top_left;
+	}
+  private:
+	void preCompute() {
+		for (int i = 1; i < n; i++) {
+			for (int j = 0; j < m; j++) {
+				d_prefix[i][j] += (d_prefix[i - 1][j] + d_matrix[i][j]);
+			}
+		}
+		for (int j = 1; j < m; j++) {
+			for (int i = 0; i < n; i++) {
+				d_prefix[i][j] += d_prefix[i][j - 1];
+			}
+		}
+	}
+	vector<vector<ll>> d_matrix;
+	vector<vector<ll>> d_prefix;
+	int n;
+	int m;
+};
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>sublime_submatrixquery</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

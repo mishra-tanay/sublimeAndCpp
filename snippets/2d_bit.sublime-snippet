@@ -1,0 +1,49 @@
+<snippet>
+	<content><![CDATA[
+class TwoDBIT {
+  public:
+	TwoDBIT(int n, int m) : d_n(n), d_m(m) {
+		d_bit.resize(n + 1, vector<ll>(m + 1, 0));
+	}
+	void update(int x, int y, ll val) {
+		int curr_x = x;
+		while (curr_x <= d_n) {
+			int curr_y = y;
+			while (curr_y <= d_m) {
+				d_bit[curr_x][curr_y] += val;
+				curr_y += curr_y & -curr_y;
+			}
+			curr_x += (curr_x & (-curr_x));
+		}
+	}
+	ll query(int x, int y) {
+		ll ans = 0;
+		int curr_x = x;
+		while (curr_x > 0) {
+			int curr_y = y;
+			while (curr_y > 0) {
+				ans += d_bit[curr_x][curr_y];
+				curr_y -= (curr_y & -curr_y);
+			}
+			curr_x -= (curr_x & (-curr_x));
+		}
+		return ans;
+	}
+	ll query(int row1, int col1, int row2, int col2) {
+		ll bottom_right = query(row2, col2);
+		ll above_top_right = query(row1 - 1, col2);
+		ll left_bottom_left = query(row2, col1 - 1);
+		ll above_and_left_top_left = query(row1 - 1, col1 - 1);
+		return bottom_right - above_top_right - left_bottom_left + above_and_left_top_left;
+	}
+  private:
+	int d_n;
+	int d_m;
+	vector<vector<ll>> d_bit;
+};
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>sublime_twodbit</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

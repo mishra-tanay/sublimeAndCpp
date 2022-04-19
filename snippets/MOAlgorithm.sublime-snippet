@@ -1,0 +1,89 @@
+<snippet>
+	<content><![CDATA[
+struct Query {
+	int left;
+	int right;
+	int index;
+	Query(int a, int b, int c) {
+		left = a;
+		right = b;
+		index = c;
+	}
+};
+class MO {
+  public:
+	MO(vector<int>& arr) : d_arr(arr) , block_size(sqrt(arr.size())) {
+		d_hash.resize(1000001, 0);
+	}
+	vector<int> solveQueries(vector<Query>& queries) { // 1 based queries
+		vector<int> ans(queries.size(), 0);
+		sort(queries.begin(), queries.end(), [this](const Query & a, const Query & b) {
+			int first_block = a.left / block_size;
+			int second_block = b.left / block_size;
+			if (first_block == second_block) {
+				return a.right < b.right;
+			}
+			return first_block < second_block;
+		});
+		left = queries[0].left;
+		right = queries[0].left;
+		curr_ans = 0;
+		addElement(left);
+		for (auto& query : queries) {
+			const int l = query.left;
+			const int r = query.right;
+			const int index = query.index;
+			while (left < l) {
+				removeElement(left);
+				left++;
+			}
+			while ( right > r) {
+				removeElement(right);
+				right--;
+			}
+			while (left > l) {
+				left--;
+				addElement(left);
+			}
+			while (right < r) {
+				right++;
+				addElement(right);
+			}
+
+			ans[index] = computeAns();
+		}
+		return ans;
+	}
+  private:
+	void addElement(int pos) {
+		if (d_hash[d_arr[pos]] == 0) {
+			curr_ans++;
+		}
+		d_hash[d_arr[pos]]++;
+	}
+
+	void removeElement(int pos) {
+		if (d_hash[d_arr[pos]] == 1) {
+			curr_ans--;
+		}
+		d_hash[d_arr[pos]]--;
+	}
+	ll computeAns() const {
+		return curr_ans;
+	}
+  private:
+	vector<int> d_arr;
+	int left = 1;
+	int right = 1;
+	ll curr_ans = 0;
+	const int block_size;
+
+	vector<int> d_hash;
+};
+
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>sublime_moalgorithm</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

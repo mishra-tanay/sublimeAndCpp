@@ -1,82 +1,66 @@
 <snippet>
 	<content><![CDATA[
-vector<int> adj[MAXN];
-vector<int> r_adj[MAXN];
-stack <int> st_for_scc;
-int count_of_scc = 0;
-int scc_number[MAXN];
-pii nodes_not_connected = { -1, -1};
-void dfsForSCC(int curr, vector <bool> &vis, bool in_reverse = false, bool calculcate_all_scc = false) {
-    vis[curr] = true;
-    if (!in_reverse) {
-        for (auto it : adj[curr]) {
-            if (!vis[it]) {
-                dfsForSCC(it, vis, in_reverse, calculcate_all_scc);
+class SCC {
+  public:
+    SCC(vector<vector<int>>& adj): d_adj(adj) {
+        int n = adj.size() - 1;
+        r_adj.resize(n + 1);
+        for (int i = 1; i <= n; i++) {
+            for (auto it : adj[i]) {
+                r_adj[it].push_back(i);
             }
         }
-    } else {
+
+        d_scc_numbers.resize(n + 1, 0);
+        vector<bool> vis(n + 1, false);
+        vector<int> order_of_dfs;
+        for (int i = 1; i <= n; i++) {
+            if (!vis[i]) {
+                calculateOrderOfDFS(i, vis, order_of_dfs);
+            }
+        }
+        for (int i = 1; i <= n; i++) {
+            vis[i] = false;
+        }
+        while (!order_of_dfs.empty()) {
+            int curr_vertex = order_of_dfs.back();
+            if (!vis[curr_vertex]) {
+                scc_number++;
+                dfsForSCC(curr_vertex, vis);
+            }
+            order_of_dfs.pop_back();
+        }
+    }
+    vector<int> getSCC() const {
+        return d_scc_numbers;
+    }
+    int getSCCCount() const {
+        return scc_number;
+    }
+  private:
+    void calculateOrderOfDFS(int curr, vector<bool> &vis, vector<int>& order_of_dfs) {
+        vis[curr] = true;
+        for (auto it : d_adj[curr]) {
+            if (!vis[it]) {
+                calculateOrderOfDFS(it, vis, order_of_dfs);
+            }
+        }
+        order_of_dfs.push_back(curr);
+    }
+    void dfsForSCC(int curr, vector<bool>& vis) {
+        vis[curr] = true;
+        d_scc_numbers[curr] = scc_number;
         for (auto it : r_adj[curr]) {
             if (!vis[it]) {
-                dfsForSCC(it, vis, in_reverse, calculcate_all_scc);
+                dfsForSCC(it, vis);
             }
         }
     }
-    if (calculcate_all_scc) {
-        st_for_scc.push(curr);
-    }
-}
-bool isStronglyConnected(int n) {
-    vector <bool> vis(n + 1, false);
-    vis[0] = true;
-    dfsForSCC(1, vis, false, false);
-    for (int i = 2; i <= n; i++) {
-        if (!vis[i]) {
-            nodes_not_connected = {1, i};
-            return false;
-        }
-    }
-    vis.clear();
-    vis.resize(n + 1, false);
-    vis[0] = true;
-    dfsForSCC(1, vis, true, false);
-    for (int i = 2; i <= n; i++) {
-        if (!vis[i]) {
-            nodes_not_connected = {i, 1};
-            return false;
-        }
-
-    }
-    return true;
-}
-void computeNodesInCurrSCC(int curr_node, vector<bool>&vis) {
-    scc_number[curr_node] = count_of_scc;
-    vis[curr_node] = true;
-    for (auto it : r_adj[curr_node]) {
-        if (!vis[it]) {
-            computeNodesInCurrSCC(it, vis);
-        }
-    }
-}
-void calculcateAllSCCUtil(int n) {
-    vector<bool> vis(n + 1, false);
-    for (int i = 1; i <= n; i++) {
-        if (!vis[i]) {
-            dfsForSCC(i, vis, false, true);
-        }
-    }
-    vis.clear();
-    vis.resize(n + 1, false);
-    assert(!st_for_scc.empty());
-    while (!st_for_scc.empty()) {
-        auto last_vertex = st_for_scc.top();
-        st_for_scc.pop();
-        if (!vis[last_vertex]) {
-            count_of_scc++;
-            computeNodesInCurrSCC(last_vertex, vis);
-
-        }
-    }
-}
+    vector<vector<int>> d_adj;
+    vector<vector<int>> r_adj;
+    vector <int> d_scc_numbers;
+    int scc_number = 0;
+};
 ]]></content>
 	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
 <tabTrigger>sublime_isSCC</tabTrigger>

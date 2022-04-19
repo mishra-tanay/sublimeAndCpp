@@ -1,46 +1,65 @@
 <snippet>
 	<content><![CDATA[
-ll segtree[4 * MAXN];
-void build(int curr, int s, int e) {
-	if (s == e) {
-		segtree[curr] = arr[s];
-		return ;
+class SegmentTree {
+  public:
+	SegmentTree(const vector<ll>& arr) : d_arr(arr) {
+		n = arr.size() - 1;
+		d_segment.resize(4 * n, 0);
+		buildSegmentTree(1, 1, n);
 	}
-	int mid = (s + e) / 2;
-	build(2 * curr, s, mid);
-	build(2 * curr + 1, mid + 1, e);
-	segtree[curr] = min(segtree[2 * curr], segtree[2 * curr + 1]);
-	return ;
-}
-void update(int curr, int s, int e , int pos , ll val) {
-	if (s == e) {
-		segtree[curr] = val;
-		return ;
-		// segtree[s]=v;
+	void update(int pos, int val) {
+		updateUtil(1, 1, n, pos, val);
 	}
-	int mid = (s + e) / 2;
-	if (pos <= mid) {
-		update(2 * curr, s, mid, pos, val);
+	ll query(int left, int right) {
+		return queryUtil(1, 1, n, left, right);
 	}
-	else {
-		update(2 * curr + 1, mid + 1, e, pos, val);
+	ll query(int pos) {
+		return query(pos, pos);
 	}
-	segtree[curr] = min(segtree[2 * curr], segtree[2 * curr + 1]);
-}
-ll query(int curr, int qs, int qe, int s, int e) {
-	if (qe < s || qs > e) 
-        return ;  // base condition 
-	if (qs <= s && e <= qe) {
-		return segtree[curr]; // current segment lies completly inside range segment
+  private:
+	void buildSegmentTree(int index, int low, int high) {
+		if (low == high) {
+			d_segment[index] = 0;
+			return;
+		}
+		int mid = (low + high) / 2;
+		buildSegmentTree(2 * index, low , mid);
+		buildSegmentTree(2 * index + 1, mid + 1, high);
+		d_segment[index] = merge(d_segment[2 * index], d_segment[2 * index + 1]);
 	}
-	else {
-		int mid = (s + e) / 2;
-		left=query(2*curr,qs,qe,s,mid);
-		right=query(2*curr+1,qs,qe,mid+1,e);
-		return ope(left,right); // return result from both left and right ;
+	ll queryUtil(int index, int low, int high, int left, int right) {
+		if (low > right || high < left) {
+			return 0; // Appropriate return value.
+		}
+		if (left <= low && right >= high) {
+			return d_segment[index];
+		}
+		int mid = (low + high) / 2;
+		auto left_ans = queryUtil(2 * index, low, mid, left, right);
+		auto right_ans = queryUtil(2 * index + 1 , mid + 1, high, left, right);
+		return merge(left_ans, right_ans);
 	}
-}
-build(1, 1, n);
+
+	void updateUtil(int index, int low, int high, int pos, int val) {
+		if (low == high) {
+			d_segment[index] += val;
+			return;
+		}
+		int mid = (low + high) / 2;
+		if ( pos <= mid) {
+			updateUtil(2 * index, low , mid, pos, val);
+		} else {
+			updateUtil(2 * index + 1, mid + 1, high, pos, val);
+		}
+		d_segment[index] = merge(d_segment[2 * index], d_segment[2 * index + 1]);
+	}
+	ll merge(int left, int right) {
+		return left + right;
+	}
+	vector<ll> d_arr;
+	vector<ll> d_segment;
+	int n;
+};
 ]]></content>
 	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
 	<tabTrigger>sublime_segment</tabTrigger>

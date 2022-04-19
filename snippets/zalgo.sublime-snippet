@@ -1,0 +1,28 @@
+<snippet>
+	<content><![CDATA[
+vector<int> getZArray(const std::string& str) {
+	int n = str.length();
+	vector<int> z(n, 0);
+	int left_boundary = 0;
+	int right_boundary = 0;
+	for (int i = 0; i < n ; i++) {
+		if (i <= right_boundary) {
+			z[i] = min(right_boundary - i + 1, z[0 + i - left_boundary]);
+		}
+		while ((i + z[i] < n) && (str[z[i]] == str[i + z[i]])) {
+			z[i]++;
+		}
+		int new_right_boundary = i + z[i] - 1;
+		if (new_right_boundary > right_boundary) {
+			right_boundary = new_right_boundary;
+			left_boundary = i;
+		}
+	}
+	return z;
+}
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+   <tabTrigger>sublime_zalgo</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

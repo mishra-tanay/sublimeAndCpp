@@ -1,64 +1,94 @@
 <snippet>
 	<content><![CDATA[
-ll segtree[4 * MAXN];
-ll lazyarray[4 * MAXN];
-ll arr[MAXN];
-void build(int curr, int s, int e) {
-    if (s == e) {
-        segtree[curr] = arr[s];
-        return ;
+class SegmentTreeLazy {
+  public:
+    SegmentTreeLazy(const vector<ll>& arr) {
+        d_arr = arr; // 1 based indexing.
+        n = d_arr.size() - 1;
+        d_segment.resize(4 * (n + 1), 0);
+        d_lazy.resize(4 * (n + 1), 0);
+        buildSegment(1, 1, n);
     }
-    int mid = (s + e) / 2;
-    build(2 * curr, s, mid);
-    build(2 * curr + 1, mid + 1, e);
-    segtree[curr] = max( segtree[2 * curr] , segtree[2 * curr + 1]);
-}
-void update_range(int curr, int s, int e, int l , int r, ll val) {
-    if (lazyarray[curr] != 0)
-    {
-        segtree[curr] += lazyarray[curr];
-        if (s != e) { // Not a leaf node , Propagagate further
-            lazyarray[2 * curr] += lazyarray[curr];
-            lazyarray[2 * curr + 1] += lazyarray[curr];
+    ll query(int left, int right) {
+        assert("valid left, right" && left <= right);
+        assert("valid left" && left >= 1 && left <= n);
+        assert("valid right" && right >= 1 && right <= n);
+        return queryUtil(1, 1, n, left, right);
+    }
+    ll query(int index) {
+        assert("valid index" && index >= 1 && index <= n);
+        return queryUtil(1, 1, n, index, index);
+    }
+    void update(int index, int val) {
+        assert("valid index" && index >= 1 && index <= n);
+        update(index, index, val);
+    }
+    void update(int left, int right, ll val) {
+        assert("valid left, right" && left <= right);
+        assert("valid left" && left >= 1 && left <= n);
+        assert("valid right" && right >= 1 && right <= n);
+        updateUtil(1, 1, n, left, right, val);
+    }
+  private:
+    void buildSegment(int curr, int start, int end) {
+        if (start == end) {
+            d_segment[curr] = d_arr[start];
+            return;
         }
-        lazyarray[curr] = 0;
+        int mid = (start + end) / 2;
+        buildSegment(2 * curr, start, mid);
+        buildSegment(2 * curr + 1, mid + 1, end);
+        d_segment[curr] = merge(d_segment[2 * curr] , d_segment[2 * curr + 1]);
     }
-    if (s > e || s > r || e < l) {
-        return ;
-    }
-    if ( s >= l && e <= r) { //Completly lies in range
-        segtree[curr] += val;
-        if ( s != e) {
-            lazyarray[2 * curr] += val;
-            lazyarray[2 * curr + 1] += val;
+    ll queryUtil(int curr, int start, int end, int left, int right) {
+        propogate(curr, start == end);
+        if (start > end || start > right || end < left) {
+            return 0;
         }
+        if (left <= start && right >= end) {
+            return d_segment[curr];
+        }
+        int mid = (start + end) / 2;
+        auto left_ans = queryUtil(2 * curr, start, mid, left, right);
+        auto right_ans = queryUtil(2 * curr + 1, mid + 1, end, left, right);
+        return merge(left_ans, right_ans);
+    }
+    void updateUtil(int curr, int start, int end, int left, int right, ll val) {
+        propogate(curr, start == end);
+        if (start > right || end < left || start > end) {
+            return;
+        }
+        if ( left <= start && right >= end) {
+            d_segment[curr] += val;
+            if (start != end) {
+                d_lazy[2 * curr] += val;
+                d_lazy[2 * curr + 1] += val;
+            }
+            return;
+        }
+        int mid = (start + end) / 2;
+        updateUtil(2 * curr, start, mid, left, right, val);
+        updateUtil(2 * curr + 1 , mid + 1, end, left, right, val);
+        d_segment[curr] = merge(d_segment[2 * curr], d_segment[2 * curr + 1]);
         return;
     }
-    int mid = (s + e) / 2;
-    update_range(2 * curr, s, mid, l, r, val);
-    update_range(2 * curr + 1, mid + 1, e, l , r, val);
-    segtree[curr] = max(segtree[2 * curr], segtree[2 * curr + 1]);
-    return ;
-}
-ll query_range(int curr, int s, int e, int l , int r) {
-    if (lazyarray[curr] != 0)
-    {
-        segtree[curr] += lazyarray[curr];
-        if (s != e) { // Not a leaf node , Propagagate further
-            lazyarray[2 * curr] += lazyarray[curr];
-            lazyarray[2 * curr + 1] += lazyarray[curr];
+    ll merge(ll a, ll b) {
+        return a ^ b;
+    }
+    void propogate(int curr, bool is_leaf_node) {
+        d_segment[curr] += d_lazy[curr];
+        if (!is_leaf_node) {
+            d_lazy[2 * curr] += d_lazy[curr];
+            d_lazy[2 * curr + 1] += d_lazy[curr];
+
         }
-        lazyarray[curr] = 0;
+        d_lazy[curr] = 0;
     }
-    if (s > e || s > r || e < l) {
-        return 0;
-    }
-    if ( s >= l && e <= r) { //Completly lies in range
-        return segtree[curr];
-    }
-    int mid = (s + e) / 2;
-    return max(query_range(2 * curr, s, mid, l, r), query_range(2 * curr + 1, mid + 1, e, l , r));
-}
+    vector<ll> d_arr;
+    vector<ll> d_segment;
+    vector<ll> d_lazy;
+    int n;
+};
 ]]></content>
 	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
 	<tabTrigger>sublime_lazysegment</tabTrigger>

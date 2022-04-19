@@ -1,55 +1,82 @@
 <snippet>
 	<content><![CDATA[
-int parent[MAXN][LOGN];
-vector < int > adj[MAXN];
-int level[MAXN];
-void computeParents(int curr, int par, int l = 0) {
-    parent[curr][0] = par;
-    level[curr] = l;
-    for (int j = 1; j < LOGN; j++) {
-        parent[curr][j] = parent[parent[curr][j - 1]][j - 1];
-    }
-    for (auto it : adj[curr]) {
-        if (it != par) {
-            computeParents(it, curr, l + 1);
-        }
-    }
-}
-int getKthParent(int curr, int k) {
-    int par = curr;
-    for (int j = LOGN - 1; j >= 0; j--) {
-        if (pow(2, j) <= k && parent[par][j] != 0) {
-            k -= pow(2, j);
-            par = parent[par][j];
-        }
-    }
-    return (k == 0 ? par : -1);
-}
-int getLCA(int u, int v) {
-    if (level[u] < level[v]) {
-        swap(u, v);
-    }
-    int diff = level[u] - level[v];
-    for (int i = LOGN - 1; i >= 0; i--) {
-        if (pow(2, i) <= diff) {
-            u = parent[u][i];
-            diff -= pow(2, i);
-        }
-    }
-    if (u == v) {
-        return u;
-    }
-    for (int i = LOGN - 1; i >= 0; i--) {
-        if (parent[u][i] != parent[v][i]) {
-            u = parent[u][i];
-            v = parent[v][i];
-        }
-    }
-    return parent[u][0];
-}
-int getDistance(int u, int v) {
-    return level[u] + level[v] - 2 * (level[getLCA(u, v)]);
-}
+class LCASolver {
+  public:
+	LCASolver(const vector<vector<int>>& adj) {
+		/// 1 based.
+		n = adj.size();
+		d_adj = adj;
+		d_logn = log2(n) + 1;
+		d_power.resize(d_logn, 0);
+		d_log.resize(n, 0);
+		d_level.resize(n, 0);
+		d_parents.resize(n, vector<int> (d_logn));
+		d_power[0] = 1;
+		for (int i = 1; i < d_logn; i++) {
+			d_power[i] = d_power[i - 1] * 2;
+		}
+		d_log[1] = 0;
+		for (int i = 2; i < n; i++) {
+			d_log[i] = d_log[i / 2] + 1;
+		}
+		computeParents(1, 0, 1);
+	}
+	int getKthParent(int node, int k) {
+		int parent = node;
+		for (int j = d_logn - 1; j >= 0; j--) {
+			if (d_power[j] <= k && d_parents[parent][j] != 0) {
+				k -= d_power[j];
+				parent = d_parents[parent][j];
+			}
+		}
+		return (k == 0 ? parent : -1);
+	}
+	int getLCA(int u, int v) {
+		if (d_level[u] < d_level[v]) {
+			swap(u, v);
+		}
+		int diff = d_level[u] - d_level[v];
+		for (int i = d_logn - 1; i >= 0; i--) {
+			if (d_power[i] <= diff) {
+				u = d_parents[u][i];
+				diff -= d_power[i];
+			}
+		}
+		if (u == v) {
+			return u;
+		}
+		for (int i = d_logn - 1; i >= 0; i--) {
+			if (d_parents[u][i] != d_parents[v][i]) {
+				u = d_parents[u][i];
+				v = d_parents[v][i];
+			}
+		}
+		return d_parents[u][0];
+	}
+	int getDistance(int u, int v) {
+		return d_level[u] + d_level[v] - 2 * (d_level[getLCA(u, v)]);
+	}
+  private:
+	void computeParents(int curr, int par, int level) {
+		d_parents[curr][0] = par;
+		d_level[curr] = level;
+		for (int j = 1; j < d_logn ; j++) {
+			d_parents[curr][j] = d_parents[d_parents[curr][j - 1]][j - 1];
+		}
+		for (auto it : d_adj[curr]) {
+			if (it != par) {
+				computeParents(it, curr, level + 1);
+			}
+		}
+	}
+	vector<vector<int>> d_adj;
+	vector<vector<int>> d_parents;
+	vector<int> d_level;
+	int n;
+	int d_logn;
+	vector<int> d_power;
+	vector <int> d_log;
+};
 
 ]]></content>
 	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->

@@ -1,0 +1,50 @@
+<snippet>
+	<content><![CDATA[
+vector<vector<ll>> multiply(vector<vector<ll>> &a, vector<vector<ll>>&b) {
+	int an = a.size();
+	int am = a[0].size();
+	int bn = b.size();
+	int bm = b[0].size();
+	vector<vector<ll>> ans(an, vector<ll>(bm, 0));
+	for (int i = 0; i < an; i++) {
+		for (int j = 0; j < bm; j++) {
+			for (int k = 0; k < am; k++) {
+				a[i][k] %= MOD;
+				b[k][j] %= MOD;
+				ans[i][j] += (a[i][k] * b[k][j]) % MOD;
+				ans[i][j] %= MOD;
+			}
+		}
+	}
+	for (int i = 0; i < an; i++) {
+		for (int j = 0; j < bm; j++) {
+			ans[i][j] %= MOD;
+		}
+	}
+	return ans;
+}
+vector <vector<ll>> matrix_exponentiation(vector<vector<ll>>& matrix, ll power) {
+	int n = matrix.size();
+	int m = matrix[0].size();
+	if (power == 0) {
+		return {{1, 0}, {0, 1}};
+	} else {
+		auto temp_ans = matrix_exponentiation(matrix, power / 2);
+		temp_ans = multiply(temp_ans, temp_ans);
+		if (power % 2 != 0) {
+			temp_ans = multiply(temp_ans, matrix);
+		}
+		for (int i = 0; i < temp_ans.size(); i++) {
+			for (int j = 0; j < temp_ans[0].size(); j++) {
+				temp_ans[i][j] %= MOD;
+			}
+		}
+		return temp_ans;
+	}
+}
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>sublime_matrixexponentiation</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

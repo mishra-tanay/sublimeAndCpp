@@ -1,59 +1,43 @@
 <snippet>
 	<content><![CDATA[
 class KMP {
-public:
+  public:
 	KMP(const string& pattern) : d_pattern(pattern) {
 		len = d_pattern.length();
+		lps.resize(len, 0);
 		buildLPS();
 	}
 	vector<int> countMatches(const string& text) {
 		vector<int> result;
-		int i = 0; // index for text
-		int j = 0; // index for pattern
-		int n = text.length();
-		while (i < n) {
-			if (text[i] == d_pattern[j]) {
-				j++;
-				i++;
-			}
-			if (j == len) {
-				result.push_back(i - len);
+		int j = 0;
+		for (int i = 0; i < text.length();) {
+			while (j > 0 && d_pattern[j] != text[i]) {
 				j = lps[j - 1];
 			}
-
-			// mismatch after j matches
-			else if (i < n && d_pattern[j] != text[i]) {
-				// Do not match lps[0..lps[j-1]] characters,
-				// they will match anyway
-				if (j != 0) {
-					j = lps[j - 1];
-				}
-				else {
-					i = i + 1;
-				}
+			if (text[i] == d_pattern[j]) {
+				j++;
 			}
+			if (j == len) {
+				result.push_back(i - len + 1);
+				j = lps[j - 1];
+			}
+			i++;
 		}
 		return result;
 	}
-private:
-	void buildLPS() {
-		lps.resize(len, 0);
-		int i = 0;
-		int j = 1;
-		while (j < len) {
-			if (d_pattern[j] == d_pattern[i]) {
-				lps[j] = i + 1;
+  private:
+	void  buildLPS() {
+		int n = (int)d_pattern.length();
+		for (int i = 1; i < n; i++) {
+			int j = lps[i - 1];
+			while (j > 0 && d_pattern[i] != d_pattern[j])
+				j = lps[j - 1];
+			if (d_pattern[i] == d_pattern[j])
 				j++;
-				i++;
-			} else {
-				if (i == 0) {
-					j++;
-				} else {
-					i = lps[i - 1];
-				}
-			}
+			lps[i] = j;
 		}
 	}
+
 	string d_pattern;
 	int len;
 	vector<int> lps;
